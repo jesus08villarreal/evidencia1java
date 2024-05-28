@@ -92,19 +92,19 @@ class Cita {
 
 class Administrador {
     String id;
-    String contraseña;
+    String password;
 
-    Administrador(String id, String contraseña) {
+    Administrador(String id, String password) {
         this.id = id;
-        this.contraseña = contraseña;
+        this.password = password;
     }
 
     String obtenerId() {
         return id;
     }
 
-    String obtenerContraseña() {
-        return contraseña;
+    String obtenerPassword() {
+        return password;
     }
 }
 
@@ -142,9 +142,9 @@ class SistemaCitas {
         citas.add(cita);
     }
 
-    boolean login(String adminId, String contraseña) {
+    boolean login(String adminId, String password) {
         for (Administrador admin : administradores) {
-            if (admin.obtenerId().equals(adminId) && admin.obtenerContraseña().equals(contraseña)) {
+            if (admin.obtenerId().equals(adminId) && admin.obtenerPassword().equals(password)) {
                 return true;
             }
         }
@@ -237,11 +237,11 @@ class SistemaCitas {
 
     void guardarAdministradores() {
         try (FileWriter writer = new FileWriter("administradores.csv")) {
-            writer.append("ID,Contraseña\n");
+            writer.append("ID,password\n");
             for (Administrador admin : administradores) {
                 writer.append(admin.obtenerId())
                     .append(',')
-                    .append(admin.obtenerContraseña())
+                    .append(admin.obtenerPassword())
                     .append('\n');
             }
         } catch (IOException e) {
