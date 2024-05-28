@@ -27,3 +27,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Windows ###
+*.class
+*.swp
+.idea/
