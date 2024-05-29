@@ -1,12 +1,18 @@
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main {
     public static void main(String[] args) {
+        // Declarar globalmente el sistema y los doctores, pacientes y citas
+
+        // Iniciar el sistema
+        
         SistemaCitas sistema = new SistemaCitas();
         sistema.iniciarSistema();
     }
@@ -122,7 +128,7 @@ class SistemaCitas {
     }
 
     void iniciarSistema() {
-        // Implementación para iniciar el sistema, mostrando el menú principal
+        System.out.println("Iniciando sistema... En proceso de desarrollo.");
     }
 
     void altaDoctor(String id, String nombreCompleto, String especialidad) {
@@ -186,8 +192,11 @@ class SistemaCitas {
     }
 
     void guardarDoctores() {
-        try (FileWriter writer = new FileWriter("doctores.csv")) {
-            writer.append("ID,Nombre Completo,Especialidad\n");
+        try (FileWriter writer = new FileWriter("src/db/doctores.csv")) {
+            // Valida si los encabezados ya existen
+            if (doctores.size() > 0) {
+                writer.append("ID,Nombre Completo,Especialidad\n");
+            }
             for (Doctor doctor : doctores) {
                 writer.append(doctor.obtenerId())
                     .append(',')
@@ -202,8 +211,11 @@ class SistemaCitas {
     }
 
     void guardarPacientes() {
-        try (FileWriter writer = new FileWriter("pacientes.csv")) {
-            writer.append("ID,Nombre Completo\n");
+        try (FileWriter writer = new FileWriter("src/db/pacientes.csv")) {
+            // Valida si los encabezados ya existen
+            if (pacientes.size() > 0) {
+                writer.append("ID,Nombre Completo\n");
+            }
             for (Paciente paciente : pacientes) {
                 writer.append(paciente.obtenerId())
                     .append(',')
@@ -216,8 +228,11 @@ class SistemaCitas {
     }
 
     void guardarCitas() {
-        try (FileWriter writer = new FileWriter("citas.csv")) {
-            writer.append("ID,Fecha/Hora,Motivo,ID Doctor,ID Paciente\n");
+        try (FileWriter writer = new FileWriter("src/db/citas.csv")) {
+            // Valida si los encabezados ya existen
+            if (citas.size() > 0) {
+                writer.append("ID,Fecha/Hora,Motivo,ID Doctor,ID Paciente\n");
+            }
             for (Cita cita : citas) {
                 writer.append(cita.obtenerId())
                     .append(',')
@@ -236,8 +251,11 @@ class SistemaCitas {
     }
 
     void guardarAdministradores() {
-        try (FileWriter writer = new FileWriter("administradores.csv")) {
-            writer.append("ID,password\n");
+        try (FileWriter writer = new FileWriter("src/db/administradores.csv")) {
+            // Valida si los encabezados ya existen
+            if (administradores.size() > 0) {
+                writer.append("ID,password\n");
+            }
             for (Administrador admin : administradores) {
                 writer.append(admin.obtenerId())
                     .append(',')
@@ -248,4 +266,198 @@ class SistemaCitas {
             e.printStackTrace();
         }
     }
+
+    void cargarDoctores() {
+        // Cargar doctores desde el archivo doctores.csv
+        try (FileReader reader = new FileReader("src/db/doctores.csv")) {
+            int c;
+            StringBuilder id = new StringBuilder();
+            StringBuilder nombreCompleto = new StringBuilder();
+            StringBuilder especialidad = new StringBuilder();
+            int field = 0;
+            boolean firstLine = true;
+            while ((c = reader.read()) != -1) {
+                if (c == ',') {
+                    field++;
+                    continue;
+                }
+                if (c == '\n') {
+                    if (firstLine) {
+                        firstLine = false;
+                        id.setLength(0);
+                        nombreCompleto.setLength(0);
+                        especialidad.setLength(0);
+                        field = 0;
+                        continue;
+                    }
+                    altaDoctor(id.toString(), nombreCompleto.toString(), especialidad.toString());
+                    id.setLength(0);
+                    nombreCompleto.setLength(0);
+                    especialidad.setLength(0);
+                    field = 0;
+                    continue;
+                }
+                switch (field) {
+                    case 0:
+                        id.append((char) c);
+                        break;
+                    case 1:
+                        nombreCompleto.append((char) c);
+                        break;
+                    case 2:
+                        especialidad.append((char) c);
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    void cargarPacientes() {
+        // Cargar pacientes desde el archivo pacientes.csv
+        try (FileReader reader = new FileReader("src/db/pacientes.csv")) {
+            int c;
+            StringBuilder id = new StringBuilder();
+            StringBuilder nombreCompleto = new StringBuilder();
+            int field = 0;
+            boolean firstLine = true;
+            while ((c = reader.read()) != -1) {
+                if (c == ',') {
+                    field++;
+                    continue;
+                }
+                if (c == '\n') {
+                    if (firstLine) {
+                        firstLine = false;
+                        id.setLength(0);
+                        nombreCompleto.setLength(0);
+                        field = 0;
+                        continue;
+                    }
+                    altaPaciente(id.toString(), nombreCompleto.toString());
+                    id.setLength(0);
+                    nombreCompleto.setLength(0);
+                    field = 0;
+                    continue;
+                }
+                switch (field) {
+                    case 0:
+                        id.append((char) c);
+                        break;
+                    case 1:
+                        nombreCompleto.append((char) c);
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void cargarCitas() {
+        // Cargar citas desde el archivo citas.csv
+        try (FileReader reader = new FileReader("src/db/citas.csv")) {
+            int c;
+            StringBuilder id = new StringBuilder();
+            StringBuilder fechaHora = new StringBuilder();
+            StringBuilder motivo = new StringBuilder();
+            StringBuilder doctorId = new StringBuilder();
+            StringBuilder pacienteId = new StringBuilder();
+            int field = 0;
+            boolean firstLine = true;
+            while ((c = reader.read()) != -1) {
+                if (c == '\n') {
+                    if (firstLine) {
+                        firstLine = false;
+                        id.setLength(0);
+                        fechaHora.setLength(0);
+                        motivo.setLength(0);
+                        doctorId.setLength(0);
+                        pacienteId.setLength(0);
+                        field = 0;
+                        continue;
+                    }
+                    if (!fechaHora.toString().isEmpty()) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        LocalDateTime dateTime = LocalDateTime.parse(fechaHora.toString(), formatter);
+                        crearCita(id.toString(), dateTime, motivo.toString(), doctorId.toString(), pacienteId.toString());
+                    }
+                    id.setLength(0);
+                    fechaHora.setLength(0);
+                    motivo.setLength(0);
+                    doctorId.setLength(0);
+                    pacienteId.setLength(0);
+                    field = 0;
+                    continue;
+                }
+                if (c == ',') {
+                    field++;
+                    continue;
+                }
+                switch (field) {
+                    case 0:
+                        id.append((char) c);
+                        break;
+                    case 1:
+                        fechaHora.append((char) c);
+                        break;
+                    case 2:
+                        motivo.append((char) c);
+                        break;
+                    case 3:
+                        doctorId.append((char) c);
+                        break;
+                    case 4:
+                        pacienteId.append((char) c);
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void cargarAdministradores() {
+        // Cargar administradores desde el archivo administradores.csv
+        try (FileReader reader = new FileReader("src/db/administradores.csv")) {
+            int c;
+            StringBuilder id = new StringBuilder();
+            StringBuilder password = new StringBuilder();
+            int field = 0;
+            boolean firstLine = true;
+            while ((c = reader.read()) != -1) {
+                if (c == ',') {
+                    field++;
+                    continue;
+                }
+                if (c == '\n') {
+                    if (firstLine) {
+                        firstLine = false;
+                        id.setLength(0);
+                        password.setLength(0);
+                        field = 0;
+                        continue;
+                    }
+                    administradores.add(new Administrador(id.toString(), password.toString()));
+                    id.setLength(0);
+                    password.setLength(0);
+                    field = 0;
+                    continue;
+                }
+                switch (field) {
+                    case 0:
+                        id.append((char) c);
+                        break;
+                    case 1:
+                        password.append((char) c);
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
