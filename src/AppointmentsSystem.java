@@ -1,6 +1,9 @@
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,10 +24,7 @@ public class AppointmentsSystem {
 
     void startSystem() {
         System.out.println("Iniciando sistema... En proceso de desarrollo.");
-        loadDoctors();
-        loadPatients();
-        loadAppointments();
-        loadAdministrators();
+        loadData();
     }
 
     void createDoctor(String id, String fullName, String specialization) {
@@ -157,6 +157,40 @@ public class AppointmentsSystem {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    void loadData() {
+
+        Path dbDirectory = Paths.get("src/db");
+        if (!Files.exists(dbDirectory)) {
+            try {
+                Files.createDirectory(dbDirectory);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String[] csvFiles = {"doctors.csv", "patients.csv", "appointments.csv", "administrators.csv"};
+        for (String csvFile : csvFiles) {
+            Path csvFilePath = Paths.get("src/db/" + csvFile);
+            if (!Files.exists(csvFilePath)) {
+                try {
+                    Files.createFile(csvFilePath);
+                    if (csvFile.equals("administrators.csv")) {
+                        loadAdministrators();
+                        administrators.add(new Administrator("admin", "admin"));
+                        saveAdministrators();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        loadDoctors();
+        loadAdministrators();
+        loadAppointments();
+        loadPatients();
     }
 
     void loadDoctors() {

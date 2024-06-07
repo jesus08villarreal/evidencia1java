@@ -105,6 +105,7 @@ public class PatientView extends JFrame {
             }
             String name = nameField.getText();
             appointmentsSystem.createPatient(id, name);
+            appointmentsSystem.savePatients();
             tableModel.addRow(new Object[]{id, name});
             clearFields();
         });
@@ -118,6 +119,7 @@ public class PatientView extends JFrame {
                 if (patient != null) {
                     patient.fullName = name;
                     tableModel.setValueAt(name, selectedRow, 1);
+                    appointmentsSystem.savePatients();
                     clearFields();
                 }
             }
@@ -128,6 +130,7 @@ public class PatientView extends JFrame {
             if (selectedRow != -1) {
                 String id = tableModel.getValueAt(selectedRow, 0).toString();
                 appointmentsSystem.patients.removeIf(patient -> patient.getId().equals(id));
+                appointmentsSystem.savePatients();
                 tableModel.removeRow(selectedRow);
                 clearFields();
             }

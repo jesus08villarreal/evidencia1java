@@ -235,7 +235,9 @@ public class AppointmentView extends JFrame {
 
     private void loadAppointments() {
         for (Appointment appointment : appointmentsSystem.appointments) {
-            tableModel.addRow(new Object[]{appointment.getId(), appointment.getDateTime().toString(), appointment.getMotive(), appointment.getDoctor().getId(), appointment.getPatient().getId()});
+            String doctorId = (appointment.getDoctor() != null) ? appointment.getDoctor().getId() : "N/A";
+            String patientId = (appointment.getPatient() != null) ? appointment.getPatient().getId() : "N/A";
+            tableModel.addRow(new Object[]{appointment.getId(), appointment.getDateTime().toString(), appointment.getMotive(), doctorId, patientId});
         }
     }
 
