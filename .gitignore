@@ -32,3 +32,6 @@ bin/
 *.class
 *.swp
 .idea/
+
+### Lib ###
+lib/

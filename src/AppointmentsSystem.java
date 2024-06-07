@@ -88,7 +88,7 @@ public class AppointmentsSystem {
     }
 
     void saveDoctors() {
-        try (FileWriter writer = new FileWriter("db/doctors.csv")) {
+        try (FileWriter writer = new FileWriter("src/db/doctors.csv")) {
             if (!doctors.isEmpty()) {
                 writer.append("ID,Nombre Completo,Especialidad\n");
             }
@@ -106,7 +106,7 @@ public class AppointmentsSystem {
     }
 
     void savePatients() {
-        try (FileWriter writer = new FileWriter("db/patients.csv")) {
+        try (FileWriter writer = new FileWriter("src/db/patients.csv")) {
             if (!patients.isEmpty()) {
                 writer.append("ID,Nombre Completo\n");
             }
@@ -122,7 +122,7 @@ public class AppointmentsSystem {
     }
 
     void saveAppointments() {
-        try (FileWriter writer = new FileWriter("db/appointments.csv")) {
+        try (FileWriter writer = new FileWriter("src/db/appointments.csv")) {
             if (!appointments.isEmpty()) {
                 writer.append("ID,Fecha/Hora,Motivo,ID Doctor,ID Patient\n");
             }
@@ -144,7 +144,7 @@ public class AppointmentsSystem {
     }
 
     void saveAdministrators() {
-        try (FileWriter writer = new FileWriter("db/administrators.csv")) {
+        try (FileWriter writer = new FileWriter("src/db/administrators.csv")) {
             if (!administrators.isEmpty()) {
                 writer.append("ID,password\n");
             }
@@ -160,7 +160,7 @@ public class AppointmentsSystem {
     }
 
     void loadDoctors() {
-        try (FileReader reader = new FileReader("db/doctors.csv")) {
+        try (FileReader reader = new FileReader("src/db/doctors.csv")) {
             int c;
             StringBuilder id = new StringBuilder();
             StringBuilder fullName = new StringBuilder();
@@ -207,7 +207,7 @@ public class AppointmentsSystem {
     }
 
     void loadPatients() {
-        try (FileReader reader = new FileReader("db/patients.csv")) {
+        try (FileReader reader = new FileReader("src/db/patients.csv")) {
             int c;
             StringBuilder id = new StringBuilder();
             StringBuilder fullName = new StringBuilder();
@@ -247,7 +247,7 @@ public class AppointmentsSystem {
     }
 
     void loadAppointments() {
-        try (FileReader reader = new FileReader("db/appointments.csv")) {
+        try (FileReader reader = new FileReader("src/db/appointments.csv")) {
             int c;
             StringBuilder id = new StringBuilder();
             StringBuilder dateTime = new StringBuilder();
@@ -309,7 +309,7 @@ public class AppointmentsSystem {
     }
 
     void loadAdministrators() {
-        try (FileReader reader = new FileReader("db/administrators.csv")) {
+        try (FileReader reader = new FileReader("src/db/administrators.csv")) {
             int c;
             StringBuilder id = new StringBuilder();
             StringBuilder password = new StringBuilder();
