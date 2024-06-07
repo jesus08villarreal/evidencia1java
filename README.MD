@@ -17,23 +17,30 @@ Gestión de Doctores: Permite agregar, actualizar, eliminar y visualizar doctore
 Gestión de Pacientes: Permite agregar, actualizar, eliminar y visualizar pacientes.
 Gestión de Citas: Permite agregar, actualizar, eliminar y visualizar citas.
 Menú Principal: Acceso a cada uno de los módulos y opción para salir del programa.
+
 Instrucciones de Uso
+
 Inicio de Sesión
 
 Ingresa con un usuario y contraseña válidos de administrador.
+
 Gestión de Doctores
 
 Navega a la sección de Doctores.
 Utiliza los botones para agregar, actualizar o eliminar doctores.
 La tabla muestra todos los doctores registrados.
+
 Gestión de Pacientes
 
 Navega a la sección de Pacientes.
+
 Utiliza los botones para agregar, actualizar o eliminar pacientes.
 La tabla muestra todos los pacientes registrados.
+
 Gestión de Citas
 
 Navega a la sección de Citas.
+
 Utiliza los botones para agregar, actualizar o eliminar citas.
 La tabla muestra todas las citas registradas.
 Los campos de ID Doctor y ID Paciente cuentan con un combobox de búsqueda para facilitar la selección.
