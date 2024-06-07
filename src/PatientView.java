@@ -1,15 +1,20 @@
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class PatientView extends JFrame {
+    private final AppointmentsSystem appointmentsSystem;
     private final JTextField idField;
     private final JTextField nameField;
+    private final JTable table;
+    private final DefaultTableModel tableModel;
 
     public PatientView(AppointmentsSystem appointmentsSystem) {
+        this.appointmentsSystem = appointmentsSystem;
 
         setTitle("Gestión de Pacientes");
-        setSize(400, 300);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -61,30 +66,83 @@ public class PatientView extends JFrame {
         constraints.gridy = 3;
         panel.add(backButton, constraints);
 
+        tableModel = new DefaultTableModel(new String[]{"ID", "Nombre"}, 0);
+        table = new JTable(tableModel);
+        loadPatients();
+
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                int selectedRow = table.getSelectedRow();
+                idField.setText(tableModel.getValueAt(selectedRow, 0).toString());
+                nameField.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            }
+        });
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(100); // ID
+        table.getColumnModel().getColumn(1).setPreferredWidth(200); // Name
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(new Dimension(600, 300));
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.gridwidth = 2;
+        panel.add(scrollPane, constraints);
+
         add(panel, BorderLayout.CENTER);
 
-        // Agregar listeners para cada botón
         backButton.addActionListener(_ -> {
             MainMenuView mainMenuView = new MainMenuView(appointmentsSystem);
             mainMenuView.setVisible(true);
             dispose();
         });
 
-        // Otros listeners para agregar, actualizar y eliminar pacientes...
         addButton.addActionListener(_ -> {
             String id = idField.getText();
+            if (appointmentsSystem.searchPatientById(id) != null) {
+                JOptionPane.showMessageDialog(this, "ID ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             String name = nameField.getText();
             appointmentsSystem.createPatient(id, name);
-            JOptionPane.showMessageDialog(PatientView.this, "Paciente agregado exitosamente!");
+            tableModel.addRow(new Object[]{id, name});
+            clearFields();
         });
 
         updateButton.addActionListener(_ -> {
-            // Lógica para actualizar paciente
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                String id = idField.getText();
+                String name = nameField.getText();
+                Patient patient = appointmentsSystem.searchPatientById(id);
+                if (patient != null) {
+                    patient.fullName = name;
+                    tableModel.setValueAt(name, selectedRow, 1);
+                    clearFields();
+                }
+            }
         });
 
         deleteButton.addActionListener(_ -> {
-            // Lógica para eliminar paciente
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                String id = tableModel.getValueAt(selectedRow, 0).toString();
+                appointmentsSystem.patients.removeIf(patient -> patient.getId().equals(id));
+                tableModel.removeRow(selectedRow);
+                clearFields();
+            }
         });
+    }
+
+    private void clearFields() {
+        idField.setText("");
+        nameField.setText("");
+    }
+
+    private void loadPatients() {
+        for (Patient patient : appointmentsSystem.patients) {
+            tableModel.addRow(new Object[]{patient.getId(), patient.getFullName()});
+        }
     }
 
     public static void main(String[] args) {

@@ -129,7 +129,7 @@ public class AppointmentsSystem {
             for (Appointment appointment : appointments) {
                 writer.append(appointment.getId())
                         .append(',')
-                        .append(appointment.getDateTime().toString())
+                        .append(appointment.getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                         .append(',')
                         .append(appointment.getMotive())
                         .append(',')
@@ -269,8 +269,15 @@ public class AppointmentsSystem {
                         continue;
                     }
                     if (!dateTime.toString().isEmpty()) {
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        LocalDateTime parsedDateTime = LocalDateTime.parse(dateTime.toString(), formatter);
+                        DateTimeFormatter formatter;
+                        LocalDateTime parsedDateTime;
+                        try {
+                            formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                            parsedDateTime = LocalDateTime.parse(dateTime.toString(), formatter);
+                        } catch (Exception e) {
+                            formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+                            parsedDateTime = LocalDateTime.parse(dateTime.toString(), formatter);
+                        }
                         createAppointment(id.toString(), parsedDateTime, motive.toString(), doctorId.toString(), patientId.toString());
                     }
                     id.setLength(0);
@@ -346,6 +353,30 @@ public class AppointmentsSystem {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getNextDoctorId() {
+        int maxId = doctors.stream()
+                .mapToInt(doctor -> Integer.parseInt(doctor.getId()))
+                .max()
+                .orElse(0);
+        return String.valueOf(maxId + 1);
+    }
+
+    public String getNextPatientId() {
+        int maxId = patients.stream()
+                .mapToInt(patient -> Integer.parseInt(patient.getId()))
+                .max()
+                .orElse(0);
+        return String.valueOf(maxId + 1);
+    }
+
+    public String getNextAppointmentId() {
+        int maxId = appointments.stream()
+                .mapToInt(appointment -> Integer.parseInt(appointment.getId()))
+                .max()
+                .orElse(0);
+        return String.valueOf(maxId + 1);
     }
 
 }
